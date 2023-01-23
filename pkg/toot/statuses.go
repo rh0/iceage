@@ -2,27 +2,24 @@ package toot
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 var endpoint = "statuses"
 
-func (c *Client) PostToot(tootMessage string) error {
+func (c *Client) PostToot(tootSpoiler, tootMessage string) error {
 	postUrl := fmt.Sprintf("%s/%s", c.BaseURL, endpoint)
 
-	buf := new(bytes.Buffer)
-	t := Toot{
-		Status: tootMessage,
-	}
-	if err := json.NewEncoder(buf).Encode(&t); err != nil {
-		return err
-	}
+    formData := url.Values{
+        "status": {tootMessage[:400]},
+        "spoiler_text": {tootSpoiler},
+    }
+    fmt.Println(formData)
 
-	req, err := http.NewRequest("POST", postUrl, buf)
-	if err != nil {
-		return err
+	req, err := http.NewRequest(http.MethodPost, postUrl, bytes.NewBufferString(formData.Encode()))
+	if err != nil { return err
 	}
 
 	if err = c.sendRequest(req); err != nil {

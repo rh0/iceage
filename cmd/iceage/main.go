@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"iceage/pkg/nws"
-	//"iceage/pkg/toot"
+	"iceage/pkg/toot"
 	"log"
 	"os"
 
@@ -22,14 +22,17 @@ func main() {
 	fmt.Println(mastoURL)
 	fmt.Println(nwsURL)
 
-	// Try to toot!
-	// t := toot.NewClient(os.Getenv("ACCESS_TOKEN"))
-	// if err = t.PostToot("BEEP BOOP!"); err != nil {
-	// 	log.Fatal("There was a problem tooting")
-	// }
-
+	// Get Weather Alerts!
+	alerts := nws.AlertList{}
 	w := nws.NewClient()
-	if err = w.FetchAlert(); err != nil {
-		log.Fatal("There was a problem fetching alerts from NWS", err)
+	alerts, err = w.FetchAlerts()
+	if err != nil {
+		log.Fatal("There was a problem fetching alerts from NWS: ", err)
+	}
+
+	//Try to toot!
+	t := toot.NewClient(os.Getenv("ACCESS_TOKEN"))
+	if err = t.PostToot(alerts.Features[0].Properties.Headline, alerts.Features[0].Properties.Description); err != nil {
+		log.Fatal("There was a problem tooting: ", err)
 	}
 }

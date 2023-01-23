@@ -49,11 +49,11 @@ func NewClient(authToken string) *Client {
 }
 
 func (c *Client) sendRequest(req *http.Request) error {
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.authToken))
 
-    // Fire the request
+	// Fire the request
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
@@ -68,15 +68,6 @@ func (c *Client) sendRequest(req *http.Request) error {
 
 		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
 	}
-
-	//fmt.Println(res.Body)
-
-	// fullResponse := successResponse{
-	// 	Data: v,
-	// }
-	// if err = json.NewDecoder(res.Body).Decode(&fullResponse); err != nil {
-	//     return err
-	// }
 
 	return nil
 }

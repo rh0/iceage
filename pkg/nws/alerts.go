@@ -12,8 +12,8 @@ type AlertList struct {
 }
 
 type Alert struct {
-	IDURL      string            `json:"id"`
-	Properties []AlertProperties `json:"properties"`
+	IDURL      string          `json:"id"`
+	Properties AlertProperties `json:"properties"`
 }
 
 type AlertProperties struct {
@@ -32,20 +32,18 @@ type AlertProperties struct {
 	Response    string `json:"response"`
 }
 
-func (c *Client) FetchAlert() error {
+func (c *Client) FetchAlerts() (AlertList, error) {
+	var res AlertList
 	getURL := fmt.Sprintf("%s/%s?zone=%s", c.BaseURL, endpoint, c.CountyCode)
-	fmt.Println(getURL)
 
 	req, err := http.NewRequest("GET", getURL, nil)
 	if err != nil {
-		return err
+		return res, err
 	}
 
-	fmt.Println("sending req")
-	var res AlertList
-	if err = c.sendRequest(req, res); err != nil {
-		return err
+	if err = c.sendRequest(req, &res); err != nil {
+		return res, err
 	}
 
-	return nil
+	return res, nil
 }

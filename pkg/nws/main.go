@@ -58,12 +58,10 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
 	}
 
-	// Handle the response
+    // Handle the response
 	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
 		return err
 	}
-
-	fmt.Println(v)
 
 	return nil
 }

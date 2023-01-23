@@ -1,7 +1,6 @@
 package toot
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -49,34 +48,12 @@ func NewClient(authToken string) *Client {
 	}
 }
 
-func (c *Client) PostToot() error {
-	postUrl := fmt.Sprintf("%s/statuses", c.BaseURL)
-
-	buf := new(bytes.Buffer)
-	t := Toot{
-        Status: "I'm a bot: Beep Boop",
-	}
-	if err := json.NewEncoder(buf).Encode(&t); err != nil {
-		return err
-	}
-
-	req, err := http.NewRequest("POST", postUrl, buf)
-	if err != nil {
-		return err
-	}
-
-	if err := c.sendRequest(req); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (c *Client) sendRequest(req *http.Request) error {
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.authToken))
 
+    // Fire the request
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
@@ -92,7 +69,7 @@ func (c *Client) sendRequest(req *http.Request) error {
 		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
 	}
 
-	fmt.Println(res.Body)
+	//fmt.Println(res.Body)
 
 	// fullResponse := successResponse{
 	// 	Data: v,

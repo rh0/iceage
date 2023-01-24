@@ -13,7 +13,7 @@ func (c *Client) PostToot(tootSpoiler, tootMessage string) error {
 	postUrl := fmt.Sprintf("%s/%s", c.BaseURL, endpoint)
 
     formData := url.Values{
-        "status": {tootMessage[:400]},
+        "status": {tootMessage},
         "spoiler_text": {tootSpoiler},
     }
     fmt.Println(formData)

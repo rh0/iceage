@@ -32,7 +32,7 @@ func main() {
 
 	//Try to toot!
 	t := toot.NewClient(os.Getenv("ACCESS_TOKEN"))
-	if err = t.PostToot(alerts.Features[0].Properties.Headline, alerts.Features[0].Properties.Description); err != nil {
+	if err = t.PostToot(alerts.Features[0].Properties.Event, alerts.Features[0].Properties.Description); err != nil {
 		log.Fatal("There was a problem tooting: ", err)
 	}
 }

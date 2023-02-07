@@ -35,11 +35,11 @@ func (c *Client) FetchForecast() (Forecast, error) {
     return res, nil
 }
 
-func (c *Client) FormatForecast(forecastResponce Forecast) string {
+func (c *Client) FormatForecast(forecastResponce Forecast, periods int) string {
     var forecastText string
 
-    for d:=0; d<4; d++ {
-        forecastText += fmt.Sprintf("%s\n%s\n", forecastResponce.Properties.Periods[d].Name, forecastResponce.Properties.Periods[d].DetailedForecast)
+    for d:=0; d<periods; d++ {
+        forecastText += fmt.Sprintf("-= %s =-\n%s\n\n", forecastResponce.Properties.Periods[d].Name, forecastResponce.Properties.Periods[d].DetailedForecast)
     }
 
     return forecastText

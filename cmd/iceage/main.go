@@ -25,30 +25,35 @@ func main() {
 	w := nws.NewClient()
 
 	// Get Weather Alerts!
-	alerts := nws.AlertList{}
-	alerts, err = w.FetchAlerts()
+	// alerts := nws.AlertList{}
+	// alerts, err = w.FetchAlerts()
+	// if err != nil {
+	// 	log.Fatal("There was a problem fetching alerts from NWS: ", err)
+	// }
+
+	// Get forecast!
+	forecast := nws.Forecast{}
+	forecast, err = w.FetchForecast()
 	if err != nil {
-		log.Fatal("There was a problem fetching alerts from NWS: ", err)
+		log.Fatal("There was a problem fetching the forecast from NWS: ", err)
 	}
-
-    // Get forecast!
-    forecast := nws.Forecast{}
-    forecast, err = w.FetchForecast()
-    if err != nil {
-        log.Fatal("There was a problem fetching the forecast from NWS: ", err)
-    }
-
 
 	t := toot.NewClient(os.Getenv("ACCESS_TOKEN"))
 
 	// Try to toot the alert!
-	if err = t.PostToot(alerts.Features[0].Properties.Event, alerts.Features[0].Properties.Description); err != nil {
-		log.Fatal("There was a problem tooting: ", err)
+	// if err = t.PostToot(alerts.Features[0].Properties.Event, alerts.Features[0].Properties.Description); err != nil {
+	// 	log.Fatal("There was a problem tooting: ", err)
+	// }
+
+	// Arrange forcast data for tooting
+	formattedForecast := w.FormatForecast(forecast, 13)
+	forecastToot := toot.Toot{
+		Spoiler: "24 hr Forecast",
+		Status:  formattedForecast,
 	}
 
-    // Tey to toot the forecast!
-    formattedForecast := w.FormatForecast(forecast)
-    if err = t.PostToot("2 day Forecast", formattedForecast); err != nil {
-        log.Fatal("There was a problem tooting: ", err)
-    }
+	// Try to toot the forecast!
+	if err = t.PostToot(forecastToot); err != nil {
+		log.Fatal("There was a problem tooting: ", err)
+	}
 }

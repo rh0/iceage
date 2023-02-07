@@ -28,11 +28,6 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
-// Status type to handle a POST payload for a simple status
-type Toot struct {
-	Status string `json:"status"`
-}
-
 func NewClient(authToken string) *Client {
 	apiURL := os.Getenv("MASTODON_API")
 	if apiURL == "" {

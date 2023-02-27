@@ -16,10 +16,9 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-// Type to handle successful http responses
-type successResponse struct {
-	Code int         `json:"code"`
-	Data interface{} `json:"data"`
+// Type to handle a successful responce
+type StatusResponse struct {
+	ID string `json:"id"`
 }
 
 // Type to handle http response errors
@@ -43,26 +42,31 @@ func NewClient(authToken string) *Client {
 	}
 }
 
-func (c *Client) sendRequest(req *http.Request) error {
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+func (c *Client) sendRequest(req *http.Request) (StatusResponse, error) {
+	var tootRes StatusResponse
+
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.authToken))
 
 	// Fire the request
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return err
+		return tootRes, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		var errRes errorResponse
 		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			return errors.New(errRes.Message)
+			return tootRes, errors.New(errRes.Message)
 		}
 
-		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
+		return tootRes, fmt.Errorf("unknown error, status code: %d", res.StatusCode)
+	}
+	if err = json.NewDecoder(res.Body).Decode(&tootRes); err != nil {
+		return tootRes, err
 	}
 
-	return nil
+	return tootRes, nil
 }

@@ -31,6 +31,11 @@ func main() {
 	// 	log.Fatal("There was a problem fetching alerts from NWS: ", err)
 	// }
 
+	// Try to toot the alert!
+	// if err = t.PostToot(alerts.Features[0].Properties.Event, alerts.Features[0].Properties.Description); err != nil {
+	// 	log.Fatal("There was a problem tooting: ", err)
+	// }
+
 	// Get forecast!
 	forecast := nws.Forecast{}
 	forecast, err = w.FetchForecast()
@@ -40,20 +45,15 @@ func main() {
 
 	t := toot.NewClient(os.Getenv("ACCESS_TOKEN"))
 
-	// Try to toot the alert!
-	// if err = t.PostToot(alerts.Features[0].Properties.Event, alerts.Features[0].Properties.Description); err != nil {
-	// 	log.Fatal("There was a problem tooting: ", err)
-	// }
-
 	// Arrange forcast data for tooting
-	formattedForecast := w.FormatForecast(forecast, 13)
+	formattedForecast := w.FormatForecast(forecast, 6)
 	forecastToot := toot.Toot{
-		Spoiler: "24 hr Forecast",
+		Spoiler: "3 day forecast",
 		Status:  formattedForecast,
 	}
 
 	// Try to toot the forecast!
-	if err = t.PostToot(forecastToot); err != nil {
+	if err = t.Toot(forecastToot); err != nil {
 		log.Fatal("There was a problem tooting: ", err)
 	}
 }

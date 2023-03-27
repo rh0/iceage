@@ -6,16 +6,9 @@ import (
 	"iceage/pkg/toot"
 	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	// Sanity checks
 	mastoURL := os.Getenv("MASTODON_API")
 	nwsURL := os.Getenv("NWS_API")
@@ -38,7 +31,7 @@ func main() {
 
 	// Get forecast!
 	forecast := nws.Forecast{}
-	forecast, err = w.FetchForecast()
+    forecast, err := w.FetchForecast()
 	if err != nil {
 		log.Fatal("There was a problem fetching the forecast from NWS: ", err)
 	}

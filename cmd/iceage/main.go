@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"iceage/pkg/nws"
 	"iceage/pkg/toot"
 	"log"
@@ -12,8 +11,9 @@ func main() {
 	// Sanity checks
 	mastoURL := os.Getenv("MASTODON_API")
 	nwsURL := os.Getenv("NWS_API")
-	fmt.Println(mastoURL)
-	fmt.Println(nwsURL)
+	l := log.Default()
+	l.Printf("Using Masto instance: %s", mastoURL)
+	l.Printf("Using NWS API: %s", nwsURL)
 
 	w := nws.NewClient()
 
@@ -31,11 +31,12 @@ func main() {
 
 	// Get forecast!
 	forecast := nws.Forecast{}
-    forecast, err := w.FetchForecast()
+	forecast, err := w.FetchForecast()
 	if err != nil {
-		log.Fatal("There was a problem fetching the forecast from NWS: ", err)
+		l.Fatal("There was a problem fetching the forecast from NWS: ", err)
 	}
 
+	l.Println("Forecast Received!")
 	t := toot.NewClient(os.Getenv("ACCESS_TOKEN"))
 
 	// Arrange forcast data for tooting
@@ -47,6 +48,7 @@ func main() {
 
 	// Try to toot the forecast!
 	if err = t.Toot(forecastToot); err != nil {
-		log.Fatal("There was a problem tooting: ", err)
+		l.Fatal("There was a problem tooting: ", err)
 	}
+	l.Println("Forecast Tooted!")
 }

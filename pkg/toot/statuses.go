@@ -53,8 +53,13 @@ func (c *Client) Toot(message Toot) error {
 func (c *Client) multiToot(toots []Toot) error {
 	var lastID string
 	var err error
+    
+    numToots := len(toots)
 
-	for _, toot := range toots {
+	for i, toot := range toots {
+        pager := fmt.Sprintf(" (%d/%d)", i+1, numToots)
+
+        toot.Spoiler = toot.Spoiler + pager
 		toot.InReplyTo = lastID
 		lastID, err = c.postToot(toot)
 		if err != nil {

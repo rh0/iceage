@@ -23,7 +23,7 @@ func (c *Client) Toot(message Toot) error {
 
 	// Check toot for length
 	if err := c.validateToot(message); err != nil && err.Error() == "toot length is too long" {
-        // The toot is too long, so split it up and thread it
+		// The toot is too long, so split it up and thread it
 		err := c.splitLongToot(message, &toots)
 		if err != nil {
 			return err
@@ -35,17 +35,17 @@ func (c *Client) Toot(message Toot) error {
 			return err
 		}
 
-        // We done
-        return nil
+		// We done
+		return nil
 	} else if err != nil {
 		return err
 	}
 
-    // The toot was valid, so post it
-    _, err := c.postToot(message)
-    if err != nil {
-        return err
-    }
+	// The toot was valid, so post it
+	_, err := c.postToot(message)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -53,13 +53,13 @@ func (c *Client) Toot(message Toot) error {
 func (c *Client) multiToot(toots []Toot) error {
 	var lastID string
 	var err error
-    
-    numToots := len(toots)
+
+	numToots := len(toots)
 
 	for i, toot := range toots {
-        pager := fmt.Sprintf(" (%d/%d)", i+1, numToots)
+		pager := fmt.Sprintf(" (%d/%d)", i+1, numToots)
 
-        toot.Spoiler = toot.Spoiler + pager
+		toot.Spoiler = toot.Spoiler + pager
 		toot.InReplyTo = lastID
 		lastID, err = c.postToot(toot)
 		if err != nil {
